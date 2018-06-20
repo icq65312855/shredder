@@ -10,4 +10,12 @@ public class Edge implements IEdge {
         this.start = start;
         this.end = end;
     }
+
+    public INode getStart() {
+        return start;
+    }
+
+    public INode getEnd() {
+        return end;
+    }
 }

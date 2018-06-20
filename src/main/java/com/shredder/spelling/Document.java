@@ -20,7 +20,7 @@ public class Document {
      * check document for original words from the dictionary
      * @return true if document contains only original words or part of words
      */
-    public boolean checkWords() {
+    public boolean isValid() {
         //TODO:
         return true;
     }
