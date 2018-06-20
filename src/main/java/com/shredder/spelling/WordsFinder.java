@@ -1,4 +1,4 @@
-package com.shredder.finder;
+package com.shredder.spelling;
 
 public interface WordsFinder {
     /**
