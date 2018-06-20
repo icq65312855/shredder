@@ -4,16 +4,26 @@ import com.shredder.edge.IEdge;
 import com.shredder.node.ColumnNode;
 import com.shredder.node.DocumentNode;
 import com.shredder.node.INode;
+import com.shredder.node.Node;
 import com.shredder.spelling.Document;
 
 import java.util.ArrayList;
 
 public class BaseGraph implements IGraph {
-    ArrayList<ColumnNode> columns;
+    ArrayList<ColumnNode> columns = new ArrayList<>();
 
     @Override
     public void addNode(String letters, int col) {
+        Node node = new Node(letters);
+        ColumnNode colNode;
 
+        if (col < columns.size()) {
+            colNode = columns.get(col);
+        } else {
+            colNode = new ColumnNode();
+            columns.add(col, colNode);
+        }
+        colNode.addNode(node);
     }
 
     @Override
@@ -27,20 +37,6 @@ public class BaseGraph implements IGraph {
 
     private ArrayList<ColumnNode> getFirstColumns() {
         return new ArrayList<>(columns);
-    }
-
-    private ArrayList<ColumnNode> getNextColumns(ArrayList<ColumnNode> excludeColumns) {
-        ArrayList<ColumnNode> otherColumns = new ArrayList<>(columns);
-        otherColumns.remove(excludeColumns);
-
-        return otherColumns;
-    }
-
-    private ArrayList<ColumnNode> getNextColumns(ColumnNode excludeColumn) {
-        ArrayList<ColumnNode> excludeColumns = new ArrayList<>();
-        excludeColumns.add(excludeColumn);
-
-        return getNextColumns(excludeColumns);
     }
 
     public INode restoreDocument() {
@@ -66,7 +62,11 @@ public class BaseGraph implements IGraph {
                 docNode = edges.remove(0).getEnd();
 
                 if (docNode.isValid()) {
-                    edges.addAll(docNode.getSortedEdges());
+                    if (docNode.fillEdges(columns)) {
+                        edges.addAll(0, docNode.getSortedEdges());
+                    } else {
+                        break;
+                    }
                 }
 
             }
@@ -75,5 +75,16 @@ public class BaseGraph implements IGraph {
 
         return docNode;
 
+    }
+
+    @Override
+    public String toString() {
+        String str = "";
+
+        for (ColumnNode node : columns) {
+            str = str + node.toString()+ " \n";
+        }
+
+        return str;
     }
 }

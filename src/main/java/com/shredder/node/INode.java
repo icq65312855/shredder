@@ -11,4 +11,6 @@ public interface INode {
     boolean isValid();
 
     void print();
+
+    boolean fillEdges(ArrayList<ColumnNode> columnNodes);
 }

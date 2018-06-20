@@ -1,19 +1,69 @@
 package com.shredder.spelling;
 
+import com.shredder.node.ColumnNode;
 import com.shredder.node.DocumentNode;
+import com.shredder.node.Node;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Document {
     ArrayList<String> rows;
+    ArrayList<String> originalRows;
 
     public Document(DocumentNode nodes) {
         this.rows = getRows(nodes);
+        this.originalRows = new ArrayList<>(this.rows);
     }
 
+    /**
+     * transform column nodes to rows
+     * @param nodes
+     * @return list of rows
+     */
     private ArrayList<String> getRows(DocumentNode nodes) {
-        //TODO: transform column nodes to rows
-        return new ArrayList<String>();
+
+        ArrayList<String> listRows = new ArrayList<>();
+
+        for (ColumnNode colNode : nodes.getNodes()) {
+
+            int row = 0;
+
+            for (Node node : colNode.getNodes()) {
+
+                if (listRows.size() <= row) {
+                    listRows.add(node.getLetters());
+                } else {
+                    String str = listRows.get(row) + node.getLetters();
+                    listRows.set(row, str);
+                }
+
+            }
+        }
+
+        return listRows;
+    }
+
+    /** Returns the tokens that match the regex pattern from the document
+     * text string.
+     * @param pattern A regular expression string specifying the
+     *   token pattern desired
+     * @return A List of tokens from the document text that match the regex
+     *   pattern
+     */
+    protected List<String> getTokens(String text, String pattern)
+    {
+        ArrayList<String> tokens = new ArrayList<String>();
+        Pattern tokSplitter = Pattern.compile(pattern);
+        Matcher m = tokSplitter.matcher(text);
+
+        while (m.find()) {
+            tokens.add(m.group());
+        }
+
+        return tokens;
     }
 
     /**
@@ -21,11 +71,32 @@ public class Document {
      * @return true if document contains only original words or part of words
      */
     public boolean isValid() {
-        //TODO:
+
+        int index = 0;
+
+        for (String str : rows) {
+
+            List<String> wordsList = getTokens(str, "[a-zA-Z]+");
+            String lastWord = "";
+
+            for (String word : wordsList) {
+                if (DictionaryTrie.getInstance().findWord(word) == null) {
+                    return false;
+                }
+                lastWord = word;
+            }
+
+            rows.set(index, lastWord);
+
+            index++;
+        }
+
         return true;
     }
 
     public void printDocument() {
-        //TODO:
+        for (String str : originalRows) {
+            System.out.println(str);
+        }
     }
 }
