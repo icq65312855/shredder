@@ -1,7 +1,9 @@
 package com.shredder.graph;
 
+import com.shredder.edge.IEdge;
 import com.shredder.node.ColumnNode;
 import com.shredder.node.DocumentNode;
+import com.shredder.node.INode;
 import com.shredder.spelling.Document;
 
 import java.util.ArrayList;
@@ -14,15 +16,38 @@ public class BaseGraph implements IGraph {
 
     }
 
+    @Override
+    public int size() {
+        return columns.size();
+    }
+
     public void addNode(ColumnNode node) {
         columns.add(node);
     }
 
-    public void restore() {
+    private ArrayList<ColumnNode> getFirstColumns() {
+        return new ArrayList<>(columns);
+    }
 
-        ArrayList<ColumnNode> firstColumns = new ArrayList<ColumnNode>(columns);
+    private ArrayList<ColumnNode> getNextColumns(ArrayList<ColumnNode> excludeColumns) {
+        ArrayList<ColumnNode> otherColumns = new ArrayList<>(columns);
+        otherColumns.remove(excludeColumns);
 
-        Document doc = null;
+        return otherColumns;
+    }
+
+    private ArrayList<ColumnNode> getNextColumns(ColumnNode excludeColumn) {
+        ArrayList<ColumnNode> excludeColumns = new ArrayList<>();
+        excludeColumns.add(excludeColumn);
+
+        return getNextColumns(excludeColumns);
+    }
+
+    public INode restoreDocument() {
+
+        ArrayList<ColumnNode> firstColumns = getFirstColumns();
+
+        INode docNode = null;
 
         while (!firstColumns.isEmpty()) {
 
@@ -30,35 +55,25 @@ public class BaseGraph implements IGraph {
 
             DocumentNode rootNode = new DocumentNode(firstColumn);
 
-            ArrayList<ColumnNode> otherColumns = new ArrayList<>(columns);
-            otherColumns.remove(firstColumn);
+            rootNode.fillEdges(columns);
 
-            doc = findDocument(rootNode, otherColumns);
+            ArrayList<IEdge> edges = new ArrayList<>();
 
-            if (doc != null) {
-                break;
+            edges.addAll(rootNode.getSortedEdges());
+
+            while (!edges.isEmpty()) {
+
+                docNode = edges.remove(0).getEnd();
+
+                if (docNode.isValid()) {
+                    edges.addAll(docNode.getSortedEdges());
+                }
+
             }
 
         }
 
-        if (doc != null) {
-            doc.printDocument();
-        }
+        return docNode;
 
-    }
-
-    private Document findDocument(DocumentNode node, ArrayList<ColumnNode> columnNodes) {
-
-        Document doc = new Document(node);
-
-        if (!doc.checkWords()) {
-            return null;
-        }
-
-        while (!columnNodes.isEmpty()) {
-
-        }
-
-        return null;
     }
 }
