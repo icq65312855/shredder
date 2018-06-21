@@ -40,6 +40,11 @@ public class ColumnNode implements INode {
     }
 
     @Override
+    public int size() {
+        return 0;
+    }
+
+    @Override
     public String toString() {
         return nodes.toString();
     }

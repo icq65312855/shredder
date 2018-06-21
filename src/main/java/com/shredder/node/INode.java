@@ -13,4 +13,6 @@ public interface INode {
     void print();
 
     boolean fillEdges(ArrayList<ColumnNode> columnNodes);
+
+    int size();
 }

@@ -40,6 +40,11 @@ public class Node implements INode {
     }
 
     @Override
+    public int size() {
+        return 0;
+    }
+
+    @Override
     public String toString() {
         return letters;
     }

@@ -20,6 +20,10 @@ public class DictionaryTrie implements  Dictionary {
 	/** Insert a word into the trie. */
 	public boolean addWord(String word)
 	{
+		if (!Character.isLetterOrDigit(word.charAt(0))) {
+			return false;
+		}
+
 		TrieNode prevNode = this.root;
 		for (Character c : word.toCharArray()) {
 			c = Character.toLowerCase(c);

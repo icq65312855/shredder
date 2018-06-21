@@ -40,6 +40,8 @@ public class Document {
                     listRows.set(row, str);
                 }
 
+                row++;
+
             }
         }
 
@@ -78,11 +80,13 @@ public class Document {
 
             List<String> wordsList = getTokens(str, "[a-zA-Z]+");
             String lastWord = "";
+            boolean isWord = true;
 
             for (String word : wordsList) {
-                if (DictionaryTrie.getInstance().findWord(word) == null) {
+                if (!isWord || DictionaryTrie.getInstance().findWord(word) == null) {
                     return false;
                 }
+                isWord = DictionaryTrie.getInstance().isWord(word);
                 lastWord = word;
             }
 

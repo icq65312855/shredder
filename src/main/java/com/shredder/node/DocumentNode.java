@@ -60,23 +60,26 @@ public class DocumentNode implements INode {
 
     public boolean fillEdges(ArrayList<ColumnNode> columnNodes) {
         ArrayList<ColumnNode> columns = new ArrayList<>(columnNodes);
-//        columns.remove(nodes);
 
-        if (columns.size() == 0) {
-            return false;
-        }
+        boolean find = false;
 
         for (ColumnNode col : columns) {
-            if (nodes.contains(col)) {
+            if (nodes.contains(col)) { //TODO: use hashset
                 continue;
             }
+            find = true;
             DocumentNode docNode = new DocumentNode(nodes);
             docNode.addColumn(col);
 
             edges.add(new Edge(this, docNode));
         }
 
-        return true;
+        return find;
+    }
+
+    @Override
+    public int size() {
+        return nodes.size();
     }
 
     @Override

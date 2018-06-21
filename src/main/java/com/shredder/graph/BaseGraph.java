@@ -45,6 +45,10 @@ public class BaseGraph implements IGraph {
 
         INode docNode = null;
 
+        boolean isFound = false;
+
+        int testCount = 0;
+
         while (!firstColumns.isEmpty()) {
 
             ColumnNode firstColumn = firstColumns.remove(0);
@@ -65,10 +69,24 @@ public class BaseGraph implements IGraph {
                     if (docNode.fillEdges(columns)) {
                         edges.addAll(0, docNode.getSortedEdges());
                     } else {
-                        break;
+                        isFound = true;
+                    }
+                    if (testCount < docNode.size()) {
+                        testCount = docNode.size();
+                        System.out.println("====Reach size "+testCount+" from "+columns.size());
+                        docNode.print();
                     }
                 }
 
+                if (isFound) {
+                    break;
+                }
+
+            }
+
+
+            if (isFound) {
+                break;
             }
 
         }
