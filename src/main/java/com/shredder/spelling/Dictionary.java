@@ -19,5 +19,6 @@ public interface Dictionary {
 	
 	/** Return the number of words in the dictionary */
 	int size();
-	
+
+	TrieNode findWord(String s);
 }

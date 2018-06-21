@@ -11,6 +11,14 @@ public class Node implements INode {
 
     private HashSet<IEdge> edges = new HashSet();
 
+    public Node(String letters) {
+        this.letters = letters;
+    }
+
+    public String getLetters() {
+        return letters;
+    }
+
     @Override
     public ArrayList<IEdge> getSortedEdges() {
         return new ArrayList<IEdge>(edges);
@@ -24,5 +32,15 @@ public class Node implements INode {
     @Override
     public void print() {
 
+    }
+
+    @Override
+    public boolean fillEdges(ArrayList<ColumnNode> columnNodes) {
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return letters;
     }
 }

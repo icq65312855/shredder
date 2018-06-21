@@ -13,7 +13,7 @@ public class DocumentNode implements INode {
 
     private HashSet<IEdge> edges = new HashSet();
 
-    private Document document;
+    private Document document = null;
 
     public DocumentNode(ArrayList<ColumnNode> nodes) {
         this.nodes = new ArrayList<>(nodes);
@@ -35,6 +35,10 @@ public class DocumentNode implements INode {
         edges.add(edge);
     }
 
+    public ArrayList<ColumnNode> getNodes() {
+        return nodes;
+    }
+
     @Override
     public ArrayList<IEdge> getSortedEdges() {
         return new ArrayList<>(edges);
@@ -42,6 +46,10 @@ public class DocumentNode implements INode {
 
     @Override
     public boolean isValid() {
+        if (document == null) {
+            document = new Document(this);
+        }
+
         return document.isValid();
     }
 
@@ -50,16 +58,36 @@ public class DocumentNode implements INode {
         document.printDocument();
     }
 
-    public void fillEdges(ArrayList<ColumnNode> columnNodes) {
+    public boolean fillEdges(ArrayList<ColumnNode> columnNodes) {
         ArrayList<ColumnNode> columns = new ArrayList<>(columnNodes);
-        columnNodes.remove(nodes);
+//        columns.remove(nodes);
+
+        if (columns.size() == 0) {
+            return false;
+        }
 
         for (ColumnNode col : columns) {
+            if (nodes.contains(col)) {
+                continue;
+            }
             DocumentNode docNode = new DocumentNode(nodes);
             docNode.addColumn(col);
 
             edges.add(new Edge(this, docNode));
-            docNode.fillEdges(columnNodes);
         }
+
+        return true;
+    }
+
+    @Override
+    public String toString() {
+
+        String str = "";
+
+        for (ColumnNode node : nodes) {
+            str = str + node.toString()+ " \n";
+        }
+
+        return str;
     }
 }
