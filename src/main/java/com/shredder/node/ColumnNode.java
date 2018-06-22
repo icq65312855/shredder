@@ -45,6 +45,32 @@ public class ColumnNode implements INode {
     }
 
     @Override
+    public INode getFirstNode() {
+        if (nodes.size() > 0) {
+            return nodes.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public INode getLastNode() {
+        if (nodes.size() > 0) {
+            return nodes.get(nodes.size() - 1);
+        }
+
+        return null;
+    }
+
+    @Override
+    public char getLetter(int vertPos, int horizPos) {
+        if (nodes.size() <= vertPos) {
+            return 0;
+        }
+
+        return nodes.get(vertPos).getLetter(vertPos,horizPos);
+    }
+
+    @Override
     public String toString() {
         return nodes.toString();
     }

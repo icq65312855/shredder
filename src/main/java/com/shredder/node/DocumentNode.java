@@ -1,11 +1,11 @@
 package com.shredder.node;
 
+import com.shredder.bigrams.BaseStat;
 import com.shredder.edge.Edge;
 import com.shredder.edge.IEdge;
 import com.shredder.spelling.Document;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 
 public class DocumentNode implements INode {
 
@@ -41,7 +41,26 @@ public class DocumentNode implements INode {
 
     @Override
     public ArrayList<IEdge> getSortedEdges() {
-        return new ArrayList<>(edges);
+        List sortedEdges = new ArrayList<>(edges);
+
+        for (IEdge edge : edges) {
+
+            long stat = 0;
+            int size = edge.getStart().size();
+
+            for (int i = 0; i < size; i++) {
+
+                String bigram = edge.getBigram(i);
+                stat += BaseStat.getInstance().getStat(bigram);
+            }
+
+            edge.setVolume(stat);
+        }
+
+        Collections.sort(sortedEdges);
+        Collections.reverse(sortedEdges);
+
+        return new ArrayList<>(sortedEdges);
     }
 
     @Override
@@ -80,6 +99,29 @@ public class DocumentNode implements INode {
     @Override
     public int size() {
         return nodes.size();
+    }
+
+    @Override
+    public INode getFirstNode() {
+        if (nodes.size() > 0) {
+            return nodes.get(0);
+        }
+
+        return null;
+    }
+
+    @Override
+    public INode getLastNode() {
+        if (nodes.size() > 0) {
+            return nodes.get(nodes.size()-1);
+        }
+
+        return null;
+    }
+
+    @Override
+    public char getLetter(int vertPos, int horizPos) {
+        return 0;
     }
 
     @Override

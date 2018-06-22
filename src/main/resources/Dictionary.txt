@@ -320415,8 +320415,6 @@ tfr
 tg
 tgn
 tgt
-th
-tha
 thack
 thacked
 thacker

@@ -5,7 +5,6 @@ import com.shredder.node.ColumnNode;
 import com.shredder.node.DocumentNode;
 import com.shredder.node.INode;
 import com.shredder.node.Node;
-import com.shredder.spelling.Document;
 
 import java.util.ArrayList;
 
@@ -36,7 +35,27 @@ public class BaseGraph implements IGraph {
     }
 
     private ArrayList<ColumnNode> getFirstColumns() {
-        return new ArrayList<>(columns);
+        ArrayList<ColumnNode> foundColumns = new ArrayList<>();
+
+        for (ColumnNode col : columns) {
+            int size = col.getNodes().size();
+            boolean isValid = true;
+
+            for (int i = 0; i < size; i++) {
+                char letter1 = col.getLetter(i, 0);
+                char letter2 = col.getLetter(i, 1);
+                if (!Character.isLetterOrDigit(letter1) && (letter1 != letter2 && letter2 != 32)) {
+                    isValid = false;
+                    break;
+                }
+            }
+
+            if (isValid) {
+                foundColumns.add(col);
+            }
+        }
+
+        return foundColumns;
     }
 
     public INode restoreDocument() {
@@ -48,6 +67,7 @@ public class BaseGraph implements IGraph {
         boolean isFound = false;
 
         int testCount = 0;
+        int testCount2 = 0;
 
         while (!firstColumns.isEmpty()) {
 
@@ -64,17 +84,19 @@ public class BaseGraph implements IGraph {
             while (!edges.isEmpty()) {
 
                 docNode = edges.remove(0).getEnd();
+                testCount2++;
 
                 if (docNode.isValid()) {
+                    if (testCount < docNode.size()) {
+                        testCount = docNode.size();
+                        System.out.println("====Reach size "+testCount+" from "+columns.size());
+                        System.out.println("was iterated: "+testCount2);
+                        System.out.println("edges.size: "+edges.size());
+                    }
                     if (docNode.fillEdges(columns)) {
                         edges.addAll(0, docNode.getSortedEdges());
                     } else {
                         isFound = true;
-                    }
-                    if (testCount < docNode.size()) {
-                        testCount = docNode.size();
-                        System.out.println("====Reach size "+testCount+" from "+columns.size());
-                        docNode.print();
                     }
                 }
 

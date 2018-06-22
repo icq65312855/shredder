@@ -10,10 +10,16 @@ public class BaseStat implements IStat {
 	private final static int Acsii_Shift = (int) FirstCharacter;
 
 	private long[] mStat;
-	
-	public BaseStat() {
+
+	private static BaseStat instance = new BaseStat();
+
+	private BaseStat() {
 		mStat = new long[STAT_SIZE];
 		resetStat();
+	}
+
+	public static BaseStat getInstance() {
+		return instance;
 	}
 	
 	private int getBigramIndex(String bigram) {

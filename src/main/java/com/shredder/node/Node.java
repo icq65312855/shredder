@@ -45,6 +45,25 @@ public class Node implements INode {
     }
 
     @Override
+    public INode getFirstNode() {
+        return this;
+    }
+
+    @Override
+    public INode getLastNode() {
+        return this;
+    }
+
+    @Override
+    public char getLetter(int vertPos, int horizPos) {
+        if (letters.length() > horizPos) {
+            return letters.charAt(horizPos);
+        }
+
+        return 0;
+    }
+
+    @Override
     public String toString() {
         return letters;
     }

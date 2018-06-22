@@ -1,9 +1,9 @@
 package com.shredder.bigrams;
 
-import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class StatLoaderTest {
 
@@ -12,8 +12,8 @@ public class StatLoaderTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		mStatLoader = new StatLoader();
-		mBaseStat = new BaseStat();
+//		mStatLoader = new StatLoader();
+//		mBaseStat = new BaseStat();
 	}
 
 	@Test

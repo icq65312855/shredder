@@ -15,4 +15,10 @@ public interface INode {
     boolean fillEdges(ArrayList<ColumnNode> columnNodes);
 
     int size();
+
+    INode getFirstNode();
+
+    INode getLastNode();
+
+    char getLetter(int vertPos, int horizPos);
 }
