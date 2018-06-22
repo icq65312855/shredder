@@ -18,7 +18,7 @@ public class MakeGraphTest {
 	@Test
 	public void testMakeGraph() {
 		try {
-		    mMakeGraph.makeGraph("src/main/resources/TestDocument.txt", "src/main/resources/TestDocument_New.txt");
+		    mMakeGraph.makeGraph("src/main/resources/Big.txt", "src/main/resources/Big_New.txt");
 		} catch (Exception e) {
 			assertTrue(false);
 		}

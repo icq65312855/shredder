@@ -7,6 +7,8 @@ import com.shredder.node.INode;
 import com.shredder.node.Node;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class BaseGraph implements IGraph {
     ArrayList<ColumnNode> columns = new ArrayList<>();
@@ -34,33 +36,59 @@ public class BaseGraph implements IGraph {
         columns.add(node);
     }
 
-    private ArrayList<ColumnNode> getFirstColumns() {
-        ArrayList<ColumnNode> foundColumns = new ArrayList<>();
+    private List<ColumnNode> getFirstColumns() {
+        //TODO: add volume for sorting
+        List<ColumnNode> foundColumns = new ArrayList<>(columns);
+
+        ArrayList<Character> specialSymbols = new ArrayList<>();
+        specialSymbols.add('!');
+        specialSymbols.add(';');
+        specialSymbols.add(')');
+        specialSymbols.add('?');
+        specialSymbols.add('}');
+        specialSymbols.add(']');
+        specialSymbols.add(':');
+        specialSymbols.add('.');
+        specialSymbols.add(',');
 
         for (ColumnNode col : columns) {
             int size = col.getNodes().size();
-            boolean isValid = true;
+            int volume = 0;
 
             for (int i = 0; i < size; i++) {
                 char letter1 = col.getLetter(i, 0);
                 char letter2 = col.getLetter(i, 1);
-                if (!Character.isLetterOrDigit(letter1) && (letter1 != letter2 && letter2 != 32)) {
-                    isValid = false;
+
+                if (letter1 == 32) {
+                    letter1 = letter2;
+                }
+
+                if (Character.isLetterOrDigit(letter1)) {
+                    volume++;
+                }
+
+                if (Character.isUpperCase(letter1)) {
+                    volume++;
+                }
+
+                if (specialSymbols.contains(letter1)) {
+                    volume = 0;
                     break;
                 }
             }
 
-            if (isValid) {
-                foundColumns.add(col);
-            }
+            col.setVolume(volume);
         }
+
+        Collections.sort(foundColumns);
+        Collections.reverse(foundColumns);
 
         return foundColumns;
     }
 
     public INode restoreDocument() {
 
-        ArrayList<ColumnNode> firstColumns = getFirstColumns();
+        List<ColumnNode> firstColumns = getFirstColumns();
 
         INode docNode = null;
 

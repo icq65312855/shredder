@@ -73,17 +73,45 @@ public class Document {
      * @return true if document contains only original words or part of words
      */
     public boolean isValid() {
+        //TODO: check only last word
 
         int index = 0;
 
         for (String str : rows) {
 
             List<String> wordsList = getTokens(str, "[a-zA-Z]+");
+            int size = wordsList.size();
+
+            if (size == 0) {
+                return true;
+            }
+
+//
+//            for (int i = 0; i < size - 1; i++) {
+//                String word = wordsList.get(i);
+//                if (!DictionaryTrie.getInstance().isWord(word)) {
+//                    return false;
+//                }
+//            }
+//
+//            if (str.charAt(str.length()-1) == 32) {
+//                if (DictionaryTrie.getInstance().isWord(wordsList.get(size - 1))) {
+//                    return false;
+//                }
+//            }
+//
+//            if (DictionaryTrie.getInstance().findWord(wordsList.get(size - 1)) == null) {
+//                return false;
+//            }
+
             String lastWord = "";
             boolean isWord = true;
 
             for (String word : wordsList) {
                 if (!isWord || DictionaryTrie.getInstance().findWord(word) == null) {
+                    return false;
+                }
+                if (!str.substring(str.length()-word.length(),str.length()).equals(word) && !DictionaryTrie.getInstance().isWord(word)) {
                     return false;
                 }
                 isWord = DictionaryTrie.getInstance().isWord(word);

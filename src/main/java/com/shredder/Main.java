@@ -12,10 +12,10 @@ public class Main {
 
     public static void main(String[] args) {
 
-        String fileName = "./src/main/resources/Big.txt";//args[0];
+        String fileName = "./src/main/resources/Testtask.txt";//args[0];
 //        String fileName = "./src/main/resources/ShreddedDocument.txt";//args[0];
         String fileDictionary = "./src/main/resources/Dictionary.txt";//args[1];
-        String fileStat = "./src/main/resources/ngrams2.txt";//args[1];
+        String fileStat = "./src/main/resources/ngrams2.txt";//args[2];
 
 
         BaseGraph graph = new BaseGraph();
