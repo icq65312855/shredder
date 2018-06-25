@@ -25,7 +25,7 @@ public class Edge implements IEdge, Comparable {
         INode firstCol = start.getLastNode();
         INode secondCol = end.getFirstNode();
 
-        return Character.toString(firstCol.getLetter(index, 0))+ Character.toString(secondCol.getLetter(index, 1));
+        return Character.toString(firstCol.getLetter(index, 1))+ Character.toString(secondCol.getLetter(index, 0));
     }
 
     @Override

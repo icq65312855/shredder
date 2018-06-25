@@ -3,12 +3,14 @@ package com.shredder.node;
 import com.shredder.edge.IEdge;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public interface INode {
 
-    ArrayList<IEdge> getSortedEdges();
+    List getSortedEdges();
 
-    boolean isValid();
+    boolean isValid(HashSet<String> words);
 
     void print();
 
@@ -21,4 +23,6 @@ public interface INode {
     INode getLastNode();
 
     char getLetter(int vertPos, int horizPos);
+
+    void removeEdge(IEdge edge);
 }

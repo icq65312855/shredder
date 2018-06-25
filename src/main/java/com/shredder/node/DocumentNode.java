@@ -3,20 +3,26 @@ package com.shredder.node;
 import com.shredder.bigrams.BaseStat;
 import com.shredder.edge.Edge;
 import com.shredder.edge.IEdge;
-import com.shredder.spelling.Document;
+import com.shredder.spelling.DictionaryTrie;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DocumentNode implements INode {
 
     private ArrayList<ColumnNode> nodes;
 
+    private ArrayList<String> rows = new ArrayList<>();
+
     private HashSet<IEdge> edges = new HashSet();
 
-    private Document document = null;
-
-    public DocumentNode(ArrayList<ColumnNode> nodes) {
-        this.nodes = new ArrayList<>(nodes);
+    public DocumentNode(DocumentNode docNode) {
+        this.nodes = new ArrayList<>(docNode.nodes);
+        this.rows = new ArrayList<>(docNode.rows);
     }
 
     public DocumentNode(ColumnNode node) {
@@ -27,6 +33,132 @@ public class DocumentNode implements INode {
     public void addColumn(ColumnNode node) {
         if (!this.nodes.contains(node)) {
             this.nodes.add(node);
+            addRows(node);
+        }
+    }
+
+    private void addRows(ColumnNode node) {
+        ArrayList<String> newRows = new ArrayList<>();
+        int index = 0;
+
+        for (Node n : node.getNodes()) {
+            String row = "";
+            if (index < rows.size()) {
+                row = rows.get(index);
+            }
+            row += n.getLetters();
+            newRows.add(row);
+            index++;
+        }
+
+        this.rows = newRows;
+    }
+
+    /** Returns the tokens that match the regex pattern from the document
+     * text string.
+     * @param pattern A regular expression string specifying the
+     *   token pattern desired
+     * @return A List of tokens from the document text that match the regex
+     *   pattern
+     */
+    protected List<String> getTokens(String text, String pattern)
+    {
+        ArrayList<String> tokens = new ArrayList<String>();
+        Pattern tokSplitter = Pattern.compile(pattern);
+        Matcher m = tokSplitter.matcher(text);
+
+        while (m.find()) {
+            tokens.add(m.group());
+        }
+
+        return tokens;
+    }
+
+    /**
+     * check document for original words from the dictionary
+     * @return true if document contains only original words or part of words
+     */
+    @Override
+    public boolean isValid(HashSet<String> words) {
+        for (String str : rows) {
+
+            List<String> wordsList = getTokens(str, "[a-zA-Z]+");
+            int size = wordsList.size();
+
+            if (size == 0) {
+                continue;
+            }
+
+            String lastWord = "";
+            boolean isWord = true;
+
+            for (String word : wordsList) {
+                if (!isWord) {
+                    return false;
+                }
+                if (words.contains(word)) {
+                    isWord = true;
+                    lastWord = word;
+                    continue;
+                }
+                if (DictionaryTrie.getInstance().findWord(word) == null) {
+                    return false;
+                }
+                isWord = DictionaryTrie.getInstance().isWord(word);
+                if (isWord) {
+                    words.add(word);
+                }
+                lastWord = word;
+            }
+
+            boolean isOnlyOneWord = str.length() == lastWord.length();
+
+            if (!isOnlyOneWord
+                    && !str.substring(str.length() - lastWord.length(), str.length()).equals(lastWord)
+                    && !DictionaryTrie.getInstance().isWord(lastWord)) {
+                return false;
+            }
+
+
+        }
+
+        return true;
+    }
+
+    /**
+     * transform column nodes to rows
+     * @return list of rows
+     */
+    private ArrayList<String> getRows() {
+
+        ArrayList<String> listRows = new ArrayList<>();
+
+        for (ColumnNode colNode : nodes) {
+
+            int row = 0;
+
+            for (Node node : colNode.getNodes()) {
+
+                if (listRows.size() <= row) {
+                    listRows.add(node.getLetters());
+                } else {
+                    String str = listRows.get(row) + node.getLetters();
+                    listRows.set(row, str);
+                }
+
+                row++;
+
+            }
+        }
+
+        return listRows;
+    }
+
+    public void print() {
+        ArrayList<String> originalRows = getRows();
+
+        for (String str : originalRows) {
+            System.out.println(str);
         }
     }
 
@@ -35,12 +167,12 @@ public class DocumentNode implements INode {
         edges.add(edge);
     }
 
-    public ArrayList<ColumnNode> getNodes() {
-        return nodes;
+    public void removeEdge(IEdge edge) {
+        edges.remove(edge);
     }
 
     @Override
-    public ArrayList<IEdge> getSortedEdges() {
+    public List getSortedEdges() {
         List sortedEdges = new ArrayList<>(edges);
 
         for (IEdge edge : edges) {
@@ -60,40 +192,25 @@ public class DocumentNode implements INode {
         Collections.sort(sortedEdges);
         Collections.reverse(sortedEdges);
 
-        return new ArrayList<>(sortedEdges);
-    }
-
-    @Override
-    public boolean isValid() {
-        if (document == null) {
-            document = new Document(this);
-        }
-
-        return document.isValid();
-    }
-
-    @Override
-    public void print() {
-        document.printDocument();
+        return sortedEdges;
     }
 
     public boolean fillEdges(ArrayList<ColumnNode> columnNodes) {
-        ArrayList<ColumnNode> columns = new ArrayList<>(columnNodes);
+        if (columnNodes.size() == nodes.size()) {
+            return false;
+        }
 
-        boolean find = false;
-
-        for (ColumnNode col : columns) {
+        for (ColumnNode col : columnNodes) {
             if (nodes.contains(col)) { //TODO: use hashset
                 continue;
             }
-            find = true;
-            DocumentNode docNode = new DocumentNode(nodes);
+            DocumentNode docNode = new DocumentNode(this);
             docNode.addColumn(col);
 
-            edges.add(new Edge(this, docNode));
+            addEdge(docNode);
         }
 
-        return find;
+        return true;
     }
 
     @Override

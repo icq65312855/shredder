@@ -31,7 +31,7 @@ public class ColumnNode implements INode, Comparable {
     }
 
     @Override
-    public boolean isValid() {
+    public boolean isValid(HashSet<String> words) {
         return false;
     }
 
@@ -74,6 +74,11 @@ public class ColumnNode implements INode, Comparable {
         }
 
         return nodes.get(vertPos).getLetter(vertPos,horizPos);
+    }
+
+    @Override
+    public void removeEdge(IEdge edge) {
+
     }
 
     @Override

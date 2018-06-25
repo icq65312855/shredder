@@ -25,7 +25,7 @@ public class Node implements INode {
     }
 
     @Override
-    public boolean isValid() {
+    public boolean isValid(HashSet<String> words) {
         return false;
     }
 
@@ -61,6 +61,11 @@ public class Node implements INode {
         }
 
         return 0;
+    }
+
+    @Override
+    public void removeEdge(IEdge edge) {
+
     }
 
     @Override

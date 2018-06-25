@@ -1,4 +1,4 @@
-package com.shredder.graph;
+package com.shredder.tools;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -7,9 +7,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
 
-public class MakeGraph {
+public class TextMixer {
 
-    public static void makeGraph(String inputfile, String outputfile) throws Exception {
+    public static void mixText(String inputfile, String outputfile) throws Exception {
     	if (inputfile.compareTo(outputfile) == 0) {
     		throw new Exception("Input & Output files must be different names!");
     	}
@@ -57,7 +57,7 @@ public class MakeGraph {
             }
             writer.close();
         } catch (IOException e) {
-            System.err.println("ERROR makeGraph : " + inputfile + "-->" + outputfile + " exception: " + e);
+            System.err.println("ERROR mixText : " + inputfile + "-->" + outputfile + " exception: " + e);
             e.printStackTrace();
         } finally {
             try {

@@ -1,24 +1,25 @@
 package com.shredder.graph;
 
-import static org.junit.Assert.*;
-
+import com.shredder.tools.TextMixer;
 import org.junit.Before;
 import org.junit.Test;
 
-public class MakeGraphTest {
+import static org.junit.Assert.assertTrue;
 
-	private MakeGraph mMakeGraph;
+public class TextMixerTest {
+
+	private TextMixer mTextMixer;
 
 	@Before
 	public void setUp() throws Exception {
-		mMakeGraph = new MakeGraph();
+		mTextMixer = new TextMixer();
 	}
 
 	@SuppressWarnings("static-access")
 	@Test
 	public void testMakeGraph() {
 		try {
-		    mMakeGraph.makeGraph("src/main/resources/Big.txt", "src/main/resources/Big_New.txt");
+		    mTextMixer.mixText("src/main/resources/Big3", "src/main/resources/Big3_Shredded.txt");
 		} catch (Exception e) {
 			assertTrue(false);
 		}

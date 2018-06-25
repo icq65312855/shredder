@@ -8,10 +8,13 @@ import com.shredder.node.Node;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 public class BaseGraph implements IGraph {
-    ArrayList<ColumnNode> columns = new ArrayList<>();
+    private ArrayList<ColumnNode> columns = new ArrayList<>();
+
+    private HashSet<String> words = new HashSet();
 
     @Override
     public void addNode(String letters, int col) {
@@ -30,10 +33,6 @@ public class BaseGraph implements IGraph {
     @Override
     public int size() {
         return columns.size();
-    }
-
-    public void addNode(ColumnNode node) {
-        columns.add(node);
     }
 
     private List<ColumnNode> getFirstColumns() {
@@ -94,9 +93,6 @@ public class BaseGraph implements IGraph {
 
         boolean isFound = false;
 
-        int testCount = 0;
-        int testCount2 = 0;
-
         while (!firstColumns.isEmpty()) {
 
             ColumnNode firstColumn = firstColumns.remove(0);
@@ -105,27 +101,21 @@ public class BaseGraph implements IGraph {
 
             rootNode.fillEdges(columns);
 
-            ArrayList<IEdge> edges = new ArrayList<>();
-
-            edges.addAll(rootNode.getSortedEdges());
+            ArrayList<IEdge> edges = new ArrayList<>(rootNode.getSortedEdges());
 
             while (!edges.isEmpty()) {
 
-                docNode = edges.remove(0).getEnd();
-                testCount2++;
+                IEdge edge = edges.remove(0);
+                docNode = edge.getEnd();
 
-                if (docNode.isValid()) {
-                    if (testCount < docNode.size()) {
-                        testCount = docNode.size();
-                        System.out.println("====Reach size "+testCount+" from "+columns.size());
-                        System.out.println("was iterated: "+testCount2);
-                        System.out.println("edges.size: "+edges.size());
-                    }
+                if (docNode.isValid(words)) {
                     if (docNode.fillEdges(columns)) {
                         edges.addAll(0, docNode.getSortedEdges());
                     } else {
                         isFound = true;
                     }
+                } else {
+                    edge.getStart().removeEdge(edge);
                 }
 
                 if (isFound) {
@@ -134,25 +124,25 @@ public class BaseGraph implements IGraph {
 
             }
 
-
             if (isFound) {
                 break;
             }
 
         }
 
+        if (isFound) System.out.println("*************** RESTORED ****************");
         return docNode;
 
     }
 
     @Override
     public String toString() {
-        String str = "";
+        StringBuilder str = new StringBuilder();
 
         for (ColumnNode node : columns) {
-            str = str + node.toString()+ " \n";
+            str.append(node.toString()).append(" \n");
         }
 
-        return str;
+        return str.toString();
     }
 }
