@@ -12,8 +12,8 @@ public class StatLoaderTest {
 	
 	@Before
 	public void setUp() throws Exception {
-//		mStatLoader = new StatLoader();
-//		mBaseStat = new BaseStat();
+		mStatLoader = new StatLoader();
+		mBaseStat = BaseStat.getInstance();
 	}
 
 	@Test
